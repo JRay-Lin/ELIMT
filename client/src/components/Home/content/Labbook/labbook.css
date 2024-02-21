@@ -1,0 +1,9 @@
+.labbook {
+    position: relative;
+    align-items: center;
+}
+
+.submit-btn {
+    position: relative;
+    width: 120px;
+}
