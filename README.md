@@ -10,9 +10,7 @@
 
 ## 架構 
   由Express結合ReactJS 形成簡易免安裝網頁應用程式，透過SQLite儲存基本用戶、檔案資訊，並透過Google Cloud API 串連雲端硬碟，將檔案儲存在雲端中，減低儲存相關設備開銷。前端頁面使用MUI(Material UI) 減低開發難度，並可自行更成喜歡的顯示風格。
-
   
-  *為開發方便使用，目前前後端及資料庫之間的連線是未加密的，建議僅在校園內網內使用。*
   ![project](https://github.com/JRay9487/Electrical-laboratory-Notebook/assets/65828051/987ebe11-90a0-4d03-b816-3cd93b66f3bd)
 
 <div>
@@ -20,7 +18,7 @@
 </div>
 
 ## 功能
-  主要功能開發完成，檔案搜尋過濾、刷新等功能正在開發。
+  主要功能開發完成，檔案搜尋過濾功能正在開發。
   
   - [x] 前後端及資料庫系統架構
   - [x] 網頁內容模組化切換
@@ -43,6 +41,8 @@
     
 ## 版本更新
 *   2024/02/16 Beta 1.0，基本功能已完成。
+*   2024/02/18 Release 1.0.0 完善搜尋功能、登出處理、https授權。
+*   2024/02/21 Release 1.0.1 修復在輸出靜態網頁後，無法正常調用pdf.js worker 的問題。
 
 <div>
   <br>
@@ -67,8 +67,8 @@
   2. 如果安裝Node.js 在輸入 ```Node -v```，應會出現版本資訊 
   3. 下載本項目資料至電腦
   4. 使用CLI 進入項目資料夾，並輸入 ```npm run install-app```，下載所有專案需求模組
-  5. 使用 ```npm run app```，啟動系統
-  6. 預設登入帳號密碼皆為admin，可透過此管理帳號新增其他用戶(開發中)，或使用[DB Browser for SQLite](https://sqlitebrowser.org/)，編輯資料庫中的`users` 資料表。
+  5. 使用 ```node server.js```，啟動系統
+  6. 預設登入帳號為admin 密碼為lab12345，可透過此管理帳號新增其他用戶(開發中)，或使用[DB Browser for SQLite](https://sqlitebrowser.org/)，編輯資料庫中的`users` 資料表。
   7. 第一次登入必須先授權Google Drive API，切換網頁至```localhost:3000/oauth```。
 
 
