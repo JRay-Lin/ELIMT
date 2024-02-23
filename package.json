@@ -4,16 +4,9 @@
     "description": "",
     "main": "server.js",
     "scripts": {
-        "install-server": "npm install",
-        "install-client": "cd client && npm install",
-        "server": "nodemon server.js",
-        "local": "nodemon local.js",
         "client": "cd client && npm start",
-        "install-dev": "npm install concurrently --save-dev && npm install nodemon --save-dev",
-        "install-app": " npm run install-dev && concurrently \"npm run install-server\" \"npm run install-react\"",
-        "update-app": "concurrently \"npm run install-server\" \"npm run install-react\"",
-        "app": "concurrently \"npm run server\" \"npm run client\"",
-        "localapp": "concurrently \"npm run local\" \"npm run client\""
+        "install-app": "npm install concurrently --save-dev && npm install nodemon --save-dev && npm install ",
+        "dev": "concurrently \"nodemon dev.js\" \"npm run client\""
     },
     "author": "CHUN-JUI,LIN",
     "license": "",

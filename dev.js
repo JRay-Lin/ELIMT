@@ -1,6 +1,5 @@
 require('dotenv').config();
 const fs = require("fs");
-const https = require("https");
 const express = require("express");
 const session = require("express-session");
 const multer = require("multer");
@@ -9,10 +8,9 @@ const path = require("path");
 const nodemailer = require("nodemailer");
 const bodyParser = require("body-parser");
 
-var privateKey = fs.readFileSync('./cert/key.pem', 'utf8');
-var certificate = fs.readFileSync('./cert/cert.pem', 'utf8');
 const uploadsFolder = "./uploads/";
 const settings = require("./settings.json");
+
 
 //GoogleDrive 組件
 const { authorize } = require("./functions/auth_modules");
@@ -27,9 +25,8 @@ const upload = multer({
   dest: "uploads/",
   limits: { fileSize: 8 * 1024 * 1024 } // 8MB
 });
-const port = 443;
+const port = 3001;
 const mailerinterval = settings.SystemMailInterval * 3600000;
-app.use(express.static(path.join(__dirname, "client", "build")));
 
 // 解析POST請求
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -481,14 +478,8 @@ setInterval(() => {
   });
 }, 6000000); // 100min
 
-app.get('/*', (req, res) => {
-  res.sendFile(path.join(__dirname, "client", "build", "index.html" ));
-});
 
 // 啟動服務器
-https.createServer({
-  key: privateKey,
-  cert: certificate
-},app).listen(port, () => {
-  console.log(`Server is running on https://localhost:${port}`);
+app.listen(port, () => {
+  console.log(`Server is running on http://localhost:${port}`);
 });
