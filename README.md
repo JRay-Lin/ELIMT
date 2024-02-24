@@ -8,7 +8,7 @@
 
 
 
-## 架構 
+## Structure 
   Express combined with ReactJS to form a simple, no-installation web application that uses SQLite to store basic user and file information, and Google Cloud API to connect to a cloud hard disk to store files in the cloud, reducing storage-related equipment costs. The front-end page uses MUI (Material UI) to reduce the development difficulty and can be changed to your favorite display style.
   
   ![project](https://github.com/JRay9487/Electrical-laboratory-Notebook/assets/65828051/987ebe11-90a0-4d03-b816-3cd93b66f3bd)
