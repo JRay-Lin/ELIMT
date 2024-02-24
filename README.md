@@ -1,7 +1,7 @@
 <div align=center>
   <img width =256 src="https://github.com/JRay9487/Electrical-laboratory-Notebook/assets/65828051/d791f893-5773-4dd9-b2ad-94e0f721e5b8"/>
   <h3>ELIMT</h3>
-  <p>簡單，適合各大專院校實驗室使用的電子系統</p>
+  <p>Simple and easy to use Electronic Laboratory Info Mangement System.</p>
   <br><br>
 
 </div>
@@ -9,7 +9,7 @@
 
 
 ## 架構 
-  由Express結合ReactJS 形成簡易免安裝網頁應用程式，透過SQLite儲存基本用戶、檔案資訊，並透過Google Cloud API 串連雲端硬碟，將檔案儲存在雲端中，減低儲存相關設備開銷。前端頁面使用MUI(Material UI) 減低開發難度，並可自行更成喜歡的顯示風格。
+  Express combined with ReactJS to form a simple, no-installation web application that uses SQLite to store basic user and file information, and Google Cloud API to connect to a cloud hard disk to store files in the cloud, reducing storage-related equipment costs. The front-end page uses MUI (Material UI) to reduce the development difficulty and can be changed to your favorite display style.
   
   ![project](https://github.com/JRay9487/Electrical-laboratory-Notebook/assets/65828051/987ebe11-90a0-4d03-b816-3cd93b66f3bd)
 
@@ -17,50 +17,50 @@
   <br>
 </div>
 
-## 功能
-  主要功能開發完成，檔案搜尋過濾功能正在開發。
+## Functions
   
-  - [x] 前後端及資料庫系統架構
-  - [x] 網頁內容模組化切換
-  - [x] 程式功能
-    - [x] 個人帳號介面
-    - [x] 常用鏈接
-    - [x] 系統設定
-    - [x] 使用者管理
-    - [x] 實驗紀錄簿
-      - [x] 實驗記錄上傳
-        - [x] 上傳功能
-        - [x] 上傳歷史紀錄
-      - [x] 實驗記錄簽核
-        - [x] 簽核功能
-        - [x] 簽核歷史
+  - [x] Front-end and Database System Architecture
+  - [x] Web Content Module Switching
+  - [x] Program Functions
+    - [x] Personal Account Interface
+    - [x] Common Links
+    - [x] System Settings
+    - [x] User Management
+    - [x] Labbook
+      - [x] Experiment Upload
+        - [x] Upload Function
+        - [x] Upload History
+      - [x] Lab Record Signing
+        - [x] Signature Function
+        - [x] Signature History
 
     
 <div>
   <br>
 </div>
 
-## 下載及使用
-  ### 注意事項
-  * 如果遇到任何問題，歡迎使用[ issues ](https://github.com/JRay9487/ELIMT/issues)回報。
-  * 本專案在Node.js v18.16.0下開發，其他版本相容性目前尚不知。
-  * 系統將使用3000(ReactJS)、3001(Express)連接埠，如果有佔用可能需要手動調整。
-  * 第一次使用必須至[localhost:3000/oauth](localhost:3000/oauth)進行Google 雲端授權驗證。
-  * 系統預設獲取最新200筆上傳資料，如需增加或減少需至`settings.json`設定。
-  * **ELIMT 電子系統為專有軟體（Proprietary software）受中華民國 著作權法保護，購買者僅被授權對程式部分內容，包括項目類別、功能、顯示方法及系統設定等進行更改，禁止移除一切可能包含版權告示之內容，任何違反契約之行為本人將保留法律追訴權。**
+## Download & Use
+  ### Notice
+  * If you encounter any problems, please feel free to report them using [ issues ](https://github.com/JRay9487/ELIMT/issues).
+  * This project is developed under Node.js v18.16.0, compatibility with other versions is not known.
+  * The system will use 3000 (ReactJS), 3001 (Express) ports, if there is any occupation may need to manually adjust.
+  * First time users must go to [localhost:3000/oauth](localhost:3000/oauth) for Google Cloud Authorization verification.
+  * The system is defaulted to get the latest 200 uploads, if you want to increase or decrease, you need to go to `settings.json` to set it.
+  * **ELIMT electronic system is a proprietary software (Proprietary software) protected by the Republic of China Copyright Law, the purchaser is only authorized to change some of the contents of the program, including the type of items, functions, display methods and system settings, etc., and is prohibited from removing all content that may contain copyright notices, any violation of the contract, I will retain the right to legal recourse. **
 
 
-  ### 已知Bug
-  * 在MacOS Sonoma 14.2.1, Safari 17.2.1（19617.1.17.11.12）下， ```@google-cloud/local-auth```可能無法進行本地驗證，建議使用Chrome瀏覽器。
+
+  ### Bugs
+  * Under macOS Sonoma 14.2.1, Safari 17.2.1 (19617.1.17.11.12), ``@google-cloud/local-auth`` may not be able to authenticate locally, Chrome is recommended.
 
 
-  ### 安裝方法
-  1. 下載 [node.js v18.16.0](https://nodejs.org/en)
-  2. 如果安裝Node.js 在輸入 ```node -v```，應會出現版本資訊 
-  3. 下載本項目資料至電腦
-  4. 使用CLI 進入項目資料夾，並輸入 ```npm install```，下載專案需求模組
-  5. 使用 ```node index.js```，啟動系統
-  6. 預設登入帳號為admin 密碼為lab12345，可透過此管理帳號新增其他用戶(開發中)，或使用[DB Browser for SQLite](https://sqlitebrowser.org/)，編輯資料庫中的`users` 資料表。
-  7. 第一次登入必須先授權Google Drive API，切換網頁至```localhost:3000/oauth```。
+  ### Install
+  1. Download [node.js v18.16.0](https://nodejs.org/en)
+  2. If you have successfully installed Node.js, type ``node -v`` and the version information should appear.  
+  3. Clone the project data to your computer
+  4. Use the CLI to access the project folder and type ``npm install`` to download the project requirements module.
+  5. Use ``node index.js`` to start the system.
+  6. Default login account is admin, password is lab12345, you can use this account to add other users, or use [DB Browser for SQLite](https://sqlitebrowser.org/) to edit the `users` table in the database.
+  7. You must authorize the Google Drive API for the first login, by switch to ``localhost:3000/oauth``.
 
 
