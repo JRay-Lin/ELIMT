@@ -1,4 +1,4 @@
-require('dotenv').config();
+require("dotenv").config();
 const fs = require("fs");
 const express = require("express");
 const session = require("express-session");
@@ -11,7 +11,6 @@ const bodyParser = require("body-parser");
 const uploadsFolder = "./uploads/";
 const settings = require("./settings.json");
 
-
 //GoogleDrive 組件
 const { authorize } = require("./functions/auth_modules");
 const { uploadFile } = require("./functions/upload");
@@ -21,9 +20,9 @@ const { checkedFile } = require("./functions/checked");
 //設定
 const app = express();
 const db = new sqlite3.Database("mydb.sqlite"); //database connect
-const upload = multer({ 
+const upload = multer({
   dest: "uploads/",
-  limits: { fileSize: 8 * 1024 * 1024 } // 8MB
+  limits: { fileSize: 8 * 1024 * 1024 }, // 8MB
 });
 const port = 3001;
 const mailerinterval = settings.SystemMailInterval * 3600000;
@@ -56,7 +55,7 @@ app.post("/login", (req, res) => {
     }
 
     // 登入驗證、回傳
-    if ( password === row.password ) {
+    if (password === row.password) {
       req.session.user = username;
 
       const userJson = {
@@ -76,7 +75,7 @@ app.post("/login", (req, res) => {
             res.status(500).json({ error: "Failed to load settings" });
             return;
           }
-          
+
           // 將 settings.json 內容添加到回應中
           userJson.settings = JSON.parse(data);
           res.json({
@@ -102,15 +101,15 @@ app.post("/login", (req, res) => {
 });
 
 // 登出
-app.get('/logout', function(req, res) {
-  req.session.destroy(function(err) {
-    if(err) {
+app.get("/logout", function (req, res) {
+  req.session.destroy(function (err) {
+    if (err) {
       console.log(err);
     } else {
-      res.redirect('/');
+      res.redirect("/");
     }
   });
-})
+});
 
 // 登入認證
 app.get("/checkAuth", (req, res) => {
@@ -141,11 +140,14 @@ app.post("/api/account/", (req, res) => {
   switch (modify) {
     case "insert":
       if (!username || !privilege) {
-        res.status(400).json({ error: "Missing required fields for insert operation." });
+        res
+          .status(400)
+          .json({ error: "Missing required fields for insert operation." });
         return;
       }
 
-      let sqlInsert = "INSERT INTO users (username, privilege, password ) VALUES (?, ?, ? )";
+      let sqlInsert =
+        "INSERT INTO users (username, privilege, password ) VALUES (?, ?, ? )";
       let paramsInsert = [username.trim(), privilege.trim(), "lab12345"];
 
       db.run(sqlInsert, paramsInsert, (err) => {
@@ -164,7 +166,9 @@ app.post("/api/account/", (req, res) => {
 
     case "delete":
       if (!username) {
-        res.status(400).json({ error: "Missing username field for delete operation." });
+        res
+          .status(400)
+          .json({ error: "Missing username field for delete operation." });
         return;
       }
 
@@ -183,7 +187,9 @@ app.post("/api/account/", (req, res) => {
 
     case "update":
       if (!username) {
-        res.status(400).json({ error: "Missing username field for update operation." });
+        res
+          .status(400)
+          .json({ error: "Missing username field for update operation." });
         return;
       }
 
@@ -191,22 +197,22 @@ app.post("/api/account/", (req, res) => {
       let paramsUpdate = [];
       let toUpdate = [];
 
-      if (fullname && fullname.trim() !== '') {
+      if (fullname && fullname.trim() !== "") {
         toUpdate.push(" fullname = ?");
         paramsUpdate.push(fullname.trim());
       }
 
-      if (email && email.trim() !== '') {
+      if (email && email.trim() !== "") {
         toUpdate.push(" email = ?");
         paramsUpdate.push(email.trim());
       }
 
-      if (password && password.trim() !== '') {
+      if (password && password.trim() !== "") {
         toUpdate.push(" password = ?");
         paramsUpdate.push(password.trim());
       }
 
-      if (privilege && privilege.trim() !== '') {
+      if (privilege && privilege.trim() !== "") {
         toUpdate.push(" privilege = ?");
         paramsUpdate.push(privilege.trim());
       }
@@ -238,17 +244,18 @@ app.post("/api/account/", (req, res) => {
 
 // 帳號列表
 app.get("/api/account/list", (req, res) => {
-  const query = 'SELECT "username", "privilege", "fullname", "email" FROM USERS'
+  const query =
+    'SELECT "username", "privilege", "fullname", "email" FROM USERS';
 
   db.all(query, [], (err, rows) => {
     if (err) {
-      res.status(400).json({ "error": err.message });
+      res.status(400).json({ error: err.message });
       return;
     }
     res.json({
-      "message": "success",
-      "data": rows
-    })
+      message: "success",
+      data: rows,
+    });
   });
 });
 
@@ -300,7 +307,6 @@ app.post("/api/upload", upload.single("file"), (req, res) => {
     .then((auth) => {
       uploadFile(auth, folderId, fileName, filePath)
         .then((fileId) => {
-          // 在這裡調用 listFiles 函數以更新資料庫
           listFiles(auth, folderId)
             .then(() => {
               res.send({
@@ -393,7 +399,6 @@ app.post("/api/checked", async (req, res) => {
     });
 });
 
-
 // 自動雲端檔案刷新
 setInterval(() => {
   const folderId = settings.GDrive_folderID;
@@ -402,7 +407,7 @@ setInterval(() => {
       .then((files) => console.log("Files listed"))
       .catch((error) => console.error("Failed to list files", error));
   });
-}, 300000); // 5min
+}, 600000); // 10min
 
 // 郵件提醒
 function sendMail(callback) {
@@ -414,7 +419,7 @@ function sendMail(callback) {
     },
   });
 
-  const query = 'SELECT "email" FROM users WHERE "privilege" > 2';
+  const query = 'SELECT "email" FROM users WHERE "privilege" > 1';
   db.all(query, [], (err, rows) => {
     if (err) {
       throw err;
@@ -427,7 +432,7 @@ function sendMail(callback) {
         from: process.env.MAILER,
         to: receivers, // 使用轉換後的接收者字串
         subject: "ELIMT System Information",
-        html: "<h3>您有一份待簽核文件，請撥空查閱ELIMT電子系統。</h3><h3>You have a document to be signed, please check the ELIMT system.</h3>",
+        html: "<h3>康老師您好，已有人上傳一份實驗紀錄，請撥空查閱<a href=http://elimt.duckdns.org>ELIMT電子系統</a>。</h3><h3>You have a document to be signed, please check the ELIMT system.</h3>",
       };
 
       transporter.sendMail(mailOptions, callback);
@@ -466,7 +471,6 @@ setInterval(() => {
     }
   });
 }, 6000000); // 100min
-
 
 // 啟動服務器
 app.listen(port, () => {

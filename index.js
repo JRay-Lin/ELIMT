@@ -25,7 +25,7 @@ const upload = multer({
   dest: "uploads/",
   limits: { fileSize: 8 * 1024 * 1024 } // 8MB
 });
-const port = 3000;
+const port = 80;
 const mailerinterval = settings.SystemMailInterval * 3600000;
 
 app.use(express.static(path.join(__dirname, "client", "build")));
@@ -302,7 +302,6 @@ app.post("/api/upload", upload.single("file"), (req, res) => {
     .then((auth) => {
       uploadFile(auth, folderId, fileName, filePath)
         .then((fileId) => {
-          // 在這裡調用 listFiles 函數以更新資料庫
           listFiles(auth, folderId)
             .then(() => {
               res.send({
@@ -429,7 +428,7 @@ function sendMail(callback) {
         from: process.env.MAILER,
         to: receivers, // 使用轉換後的接收者字串
         subject: "ELIMT System Information",
-        html: "<h3>您有一份待簽核文件，請撥空查閱<a href='http://elimt.duckdns.org'>ELIMT電子系統</a>。</h3><h3>You have a document to be signed, please check the ELIMT system.</h3>",
+        html: "<h3>康老師您好，已有人上傳一份實驗紀錄，請撥空查閱<a href=http://elimt.duckdns.org>ELIMT電子系統</a>。</h3><h3>You have a document to be signed, please check the ELIMT system.</h3>",
       };
 
       transporter.sendMail(mailOptions, callback);
@@ -437,7 +436,7 @@ function sendMail(callback) {
       console.log("No users with privilege > 1 found.");
     }
   });
-};
+}
 
 // 暫存檔案清除器
 setInterval(() => {

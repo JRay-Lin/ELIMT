@@ -423,7 +423,7 @@ function sendMail(callback) {
         from: process.env.MAILER,
         to: receivers, // 使用轉換後的接收者字串
         subject: "ELIMT System Information",
-        html: "<h3>您有一份待簽核文件，請撥空查閱ELIMT電子系統。</h3><h3>You have a document to be signed, please check the ELIMT system.</h3>",
+        html: "<h3>康老師您好，已有人上傳一份實驗紀錄，請撥空查閱<a href=http://elimt.duckdns.org>ELIMT電子系統</a>。</h3><h3>You have a document to be signed, please check the ELIMT system.</h3>",
       };
 
       transporter.sendMail(mailOptions, callback);

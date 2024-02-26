@@ -110,7 +110,7 @@ export default function Navigator(props) {
               color: "#fff",
             }}
           >
-            Release 1.0.3
+            v1.1.0
           </Typography>
         </ListItem>
 

@@ -22,8 +22,9 @@ export default function CheckHistory({ history }) {
   };
 
   const filteredItems = history.filter((item) =>
-    item.filename.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  item.filename.toLowerCase().includes(searchTerm.toLowerCase()) ||
+  item.fullname.toLowerCase().includes(searchTerm.toLowerCase())
+);
   return (
     <Box sx={{ mx: 4, my: 2 }}>
       <Box  sx={{ backgroundColor: "#1E1E1E" }}>
@@ -35,7 +36,7 @@ export default function CheckHistory({ history }) {
             <TextField
               variant="standard"
               fullWidth
-              placeholder="Search by filename"
+              placeholder="Search by filename or creater"
               InputLabelProps={{
                 style: { color: "#C0C0C0" },
               }}
