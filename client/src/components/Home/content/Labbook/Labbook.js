@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import PdfViewer from "./pdfviewer/Pdfviewer";
+import PdfViewer from "./Pdfviewer";
 
 import "./labbook.css";
 import {
@@ -46,11 +46,6 @@ function Labbook({ userInfo, tabIndex }) {
 
   // 確認視窗
   const handleConfirm = () => {
-    if (!uploadFile || !uploadname) {
-      alert("File or upload name is missing!");
-      return;
-    }
-
     const formData = new FormData();
     formData.append("file", uploadFile);
     formData.append("uploadname", uploadname);
@@ -179,23 +174,36 @@ function Labbook({ userInfo, tabIndex }) {
           </Grid>
 
           <Dialog open={openPop} onClose={handleClose}>
-            <DialogTitle>{"確認提交"}</DialogTitle>
-            <DialogContent>
-              <DialogContentText>
-                請確認您要提交的信息和檔案，檔案將以:
-              </DialogContentText>
-              <DialogContentText>
-                {uploadname} 儲存於Google Drive資料庫。
-              </DialogContentText>
-            </DialogContent>
-            <DialogActions>
-              <Button onClick={handleClose} color="primary">
-                取消
-              </Button>
-              <Button onClick={handleConfirm} color="primary" autoFocus>
-                確認
-              </Button>
-            </DialogActions>
+            {!uploadFile || !experimentDetail ? (
+              <>
+                <DialogTitle>{"輸入異常"}</DialogTitle>
+                <DialogContent>
+                  <DialogContentText>
+                    請輸入實驗簡述或上傳檔案!
+                  </DialogContentText>
+                </DialogContent>
+              </>
+            ) : (
+              <>
+                <DialogTitle>{"確認提交"}</DialogTitle>
+                <DialogContent>
+                  <DialogContentText>
+                    請確認您要提交的信息和檔案，檔案將以:
+                  </DialogContentText>
+                  <DialogContentText>
+                    {uploadname} 儲存於Google Drive資料庫。
+                  </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                  <Button onClick={handleClose} color="primary">
+                    取消
+                  </Button>
+                  <Button onClick={handleConfirm} color="primary" autoFocus>
+                    確認
+                  </Button>
+                </DialogActions>
+              </>
+            )}
           </Dialog>
         </Box>
       )}

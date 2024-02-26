@@ -308,6 +308,13 @@ app.post("/api/upload", upload.single("file"), (req, res) => {
                 fileId: fileId,
                 message: "File uploaded and database updated successfully.",
               });
+              sendMail((error, info) => {
+                if (error) {
+                  console.log("Error sending mail: ", error);
+                } else {
+                  console.log("Mail sent: ", info.response);
+                }
+              });
             })
             .catch((error) => {
               console.error("Failed to update database:", error);
@@ -429,24 +436,6 @@ function sendMail(callback) {
     }
   });
 }
-setInterval(() => {
-  const query = 'SELECT "googleId" FROM files WHERE "check" = "false"';
-  db.all(query, [], (err, rows) => {
-    if (err) {
-      throw err;
-    }
-    if (rows.length > 0) {
-      // 如果有一或多個文件未檢查，則發送郵件
-      sendMail((error, info) => {
-        if (error) {
-          console.log("Error sending mail: ", error);
-        } else {
-          console.log("Mail sent: ", info.response);
-        }
-      });
-    }
-  });
-}, mailerinterval);
 
 // 暫存檔案清除器
 setInterval(() => {
@@ -481,5 +470,5 @@ setInterval(() => {
 
 // 啟動服務器
 app.listen(port, () => {
-  console.log(`Server is running on http://localhost:${port}`);
+  console.log(`Dev-Server is running on http://localhost:${port}`);
 });

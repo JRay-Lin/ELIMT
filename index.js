@@ -310,6 +310,13 @@ app.post("/api/upload", upload.single("file"), (req, res) => {
                 fileId: fileId,
                 message: "File uploaded and database updated successfully.",
               });
+              sendMail((error, info) => {
+                if (error) {
+                  console.log("Error sending mail: ", error);
+                } else {
+                  console.log("Mail sent: ", info.response);
+                }
+              });
             })
             .catch((error) => {
               console.error("Failed to update database:", error);
@@ -409,7 +416,7 @@ function sendMail(callback) {
     },
   });
 
-  const query = 'SELECT "email" FROM users WHERE "privilege" > 2';
+  const query = 'SELECT "email" FROM users WHERE "privilege" > 1';
   db.all(query, [], (err, rows) => {
     if (err) {
       throw err;
@@ -422,7 +429,7 @@ function sendMail(callback) {
         from: process.env.MAILER,
         to: receivers, // 使用轉換後的接收者字串
         subject: "ELIMT System Information",
-        html: "<h3>您有一份待簽核文件，請撥空查閱ELIMT電子系統。</h3><h3>You have a document to be signed, please check the ELIMT system.</h3>",
+        html: "<h3>您有一份待簽核文件，請撥空查閱<a href='http://elimt.duckdns.org'>ELIMT電子系統</a>。</h3><h3>You have a document to be signed, please check the ELIMT system.</h3>",
       };
 
       transporter.sendMail(mailOptions, callback);
@@ -430,25 +437,7 @@ function sendMail(callback) {
       console.log("No users with privilege > 1 found.");
     }
   });
-}
-setInterval(() => {
-  const query = 'SELECT "googleId" FROM files WHERE "check" = "false"';
-  db.all(query, [], (err, rows) => {
-    if (err) {
-      throw err;
-    }
-    if (rows.length > 0) {
-      // 如果有一或多個文件未檢查，則發送郵件
-      sendMail((error, info) => {
-        if (error) {
-          console.log("Error sending mail: ", error);
-        } else {
-          console.log("Mail sent: ", info.response);
-        }
-      });
-    }
-  });
-}, mailerinterval);
+};
 
 // 暫存檔案清除器
 setInterval(() => {

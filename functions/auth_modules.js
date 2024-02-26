@@ -29,7 +29,7 @@ async function saveCredentials(client) {
       client_secret: key.client_secret,
       refresh_token: client.credentials.refresh_token,
     });
-    await fs.writeFile(TOKEN_PATH, payload, "utf8"); // 也指定 'utf8' 格式
+    await fs.writeFile(TOKEN_PATH, payload, "utf8"); 
   } catch (err) {
     console.log("Failed to save credentials", err);
   }
