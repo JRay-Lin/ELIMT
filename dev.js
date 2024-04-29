@@ -11,6 +11,7 @@ const bodyParser = require("body-parser");
 const uploadsFolder = "./uploads/";
 const settings = require("./settings.json");
 
+
 //GoogleDrive 組件
 const { authorize } = require("./functions/auth_modules");
 const { uploadFile } = require("./functions/upload");
@@ -22,10 +23,13 @@ const app = express();
 const db = new sqlite3.Database("mydb.sqlite"); //database connect
 const upload = multer({
   dest: "uploads/",
-  limits: { fileSize: 8 * 1024 * 1024 }, // 8MB
+  limits: { fileSize: settings.maximum_uploadSize * 1024 * 1024 }, // MB
 });
 const port = 3001;
 const mailerinterval = settings.SystemMailInterval * 3600000;
+
+// Use builded website
+//app.use(express.static(path.join(__dirname, "client", "build")));
 
 // 解析POST請求
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -299,7 +303,7 @@ app.post("/api/upload", upload.single("file"), (req, res) => {
     return res.status(400).send("No file uploaded.");
   }
 
-  const folderId = settings.GDrive_folderID;
+  const folderId = process.env.FOLDER;
   const fileName = req.body.uploadname;
   const filePath = req.file.path;
 
@@ -345,7 +349,7 @@ app.post("/api/upload", upload.single("file"), (req, res) => {
 
 // 獲得雲端檔案列表
 app.get("/api/list", (req, res) => {
-  const folderId = settings.GDrive_folderID;
+  const folderId = process.env.FOLDER;
 
   authorize().then((auth) => {
     listFiles(auth, folderId)
@@ -366,7 +370,7 @@ app.post("/api/checked", async (req, res) => {
   authorize()
     .then((auth) => {
       Promise.all(googleIds.map((fileId) => checkedFile(auth, fileId)))
-        .then(() => listFiles(auth, settings.GDrive_folderID)) // 更新本地列表
+        .then(() => listFiles(auth, process.env.FOLDER)) // 更新本地列表
         .then(() => {
           const query =
             'SELECT "googleId", "filename", "creater", "date" FROM files WHERE "check" = "false"';
@@ -401,7 +405,8 @@ app.post("/api/checked", async (req, res) => {
 
 // 自動雲端檔案刷新
 setInterval(() => {
-  const folderId = settings.GDrive_folderID;
+  const folderId = process.env.FOLDER;
+
   authorize().then((auth) => {
     listFiles(auth, folderId)
       .then((files) => console.log("Files listed"))
@@ -471,6 +476,11 @@ setInterval(() => {
     }
   });
 }, 6000000); // 100min
+
+// Use builded website
+//app.get('/*', (req, res) => {
+//  res.sendFile(path.join(__dirname, "client", "build", "index.html" ));
+//});
 
 // 啟動服務器
 app.listen(port, () => {

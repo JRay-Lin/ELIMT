@@ -294,7 +294,7 @@ app.post("/api/upload", upload.single("file"), (req, res) => {
     return res.status(400).send("No file uploaded.");
   }
 
-  const folderId = settings.GDrive_folderID;
+  const folderId = process.env.FOLDER;
   const fileName = req.body.uploadname;
   const filePath = req.file.path;
 
@@ -340,7 +340,7 @@ app.post("/api/upload", upload.single("file"), (req, res) => {
 
 // 獲得雲端檔案列表
 app.get("/api/list", (req, res) => {
-  const folderId = settings.GDrive_folderID;
+  const folderId = process.env.FOLDER;
 
   authorize().then((auth) => {
     listFiles(auth, folderId)
@@ -357,11 +357,12 @@ app.get("/api/list", (req, res) => {
 // 檔案簽核
 app.post("/api/checked", async (req, res) => {
   const { googleIds } = req.body;
+  const folderID = process.env.FOLDER;
 
   authorize()
     .then((auth) => {
       Promise.all(googleIds.map((fileId) => checkedFile(auth, fileId)))
-        .then(() => listFiles(auth, settings.GDrive_folderID)) // 更新本地列表
+        .then(() => listFiles(auth, folderID)) // 更新本地列表
         .then(() => {
           const query =
             'SELECT "googleId", "filename", "creater", "date" FROM files WHERE "check" = "false"';
@@ -396,7 +397,8 @@ app.post("/api/checked", async (req, res) => {
 
 // 自動雲端檔案刷新
 setInterval(() => {
-  const folderId = settings.GDrive_folderID;
+  const folderId = process.env.FOLDER;
+
   authorize().then((auth) => {
     listFiles(auth, folderId)
       .then((files) => console.log("Files listed"))
