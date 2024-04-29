@@ -1,6 +1,7 @@
 {
   "GDrive_folderID": "18Rq4cjOkovKWUJNHkab_7aXp4QRN1FPg",
-  "File_Amount": "1000",
+  "File_Amount": 1000,
+  "maximum_uploadSize":100,
   "link": {
     "Google": "https://www.google.com",
     "工時登錄系統": "https://vwebap02.cmu.edu.tw/Plan_StuWorkAmt_Apply/login.aspx",

@@ -23,7 +23,7 @@ const app = express();
 const db = new sqlite3.Database("mydb.sqlite"); //database connect
 const upload = multer({ 
   dest: "uploads/",
-  limits: { fileSize: 8 * 1024 * 1024 } // 8MB
+  limits: { fileSize: settings.maximum_uploadSize * 1024 * 1024 } // MB
 });
 const port = 80;
 const mailerinterval = settings.SystemMailInterval * 3600000;
