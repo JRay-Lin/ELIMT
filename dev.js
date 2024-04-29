@@ -33,7 +33,7 @@ app.use(bodyParser.json()); // 添加 JSON 解析
 
 app.use(
   session({
-    secret: process.env.SECRET_KEY,
+    secret: process.env.SECRET,
     resave: false,
     saveUninitialized: true,
   })

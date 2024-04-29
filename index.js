@@ -394,7 +394,6 @@ app.post("/api/checked", async (req, res) => {
     });
 });
 
-
 // 自動雲端檔案刷新
 setInterval(() => {
   const folderId = settings.GDrive_folderID;
@@ -415,7 +414,7 @@ function sendMail(callback) {
     },
   });
 
-  const query = 'SELECT "email" FROM users WHERE "privilege" > 1';
+  const query = 'SELECT "email" FROM users WHERE "privilege" > 2';
   db.all(query, [], (err, rows) => {
     if (err) {
       throw err;
