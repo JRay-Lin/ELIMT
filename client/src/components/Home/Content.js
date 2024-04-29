@@ -24,7 +24,6 @@ export default function Content(props) {
   }, []);
 
   // tabindex
-
   const renderContentComponent = () => {
     switch (activeItem) {
       case "Profile":

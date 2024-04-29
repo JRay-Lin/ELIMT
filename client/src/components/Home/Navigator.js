@@ -98,10 +98,10 @@ export default function Navigator(props) {
             ...item,
             ...itemCategory,
             fontSize: 22,
-            color: "#fff",
+            color: "#5285DE",
           }}
         >
-          YLK ELIMT
+          ELIMT
           <Typography
             sx={{
               fontSize: 10,
@@ -110,7 +110,7 @@ export default function Navigator(props) {
               color: "#fff",
             }}
           >
-            v1.1.0
+            v1.2.0
           </Typography>
         </ListItem>
 

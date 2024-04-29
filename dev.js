@@ -1,3 +1,4 @@
+// Requirement
 require("dotenv").config();
 const fs = require("fs");
 const express = require("express");
@@ -12,28 +13,24 @@ const uploadsFolder = "./uploads/";
 const settings = require("./settings.json");
 
 
-//GoogleDrive 組件
+// Google Drive components
 const { authorize } = require("./functions/auth_modules");
 const { uploadFile } = require("./functions/upload");
 const { listFiles } = require("./functions/list");
 const { checkedFile } = require("./functions/checked");
 
-//設定
+// Settings
 const app = express();
-const db = new sqlite3.Database("mydb.sqlite"); //database connect
+const db = new sqlite3.Database("system.sqlite"); //database connect
 const upload = multer({
   dest: "uploads/",
   limits: { fileSize: settings.maximum_uploadSize * 1024 * 1024 }, // MB
 });
 const port = 3001;
-const mailerinterval = settings.SystemMailInterval * 3600000;
 
-// Use builded website
-//app.use(express.static(path.join(__dirname, "client", "build")));
-
-// 解析POST請求
+// POST parser
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json()); // 添加 JSON 解析
+app.use(bodyParser.json()); // add JSON parser
 
 app.use(
   session({
@@ -43,7 +40,7 @@ app.use(
   })
 );
 
-// 登錄
+// Login
 app.post("/login", (req, res) => {
   const { username, password } = req.body;
   db.get("SELECT * FROM users WHERE username = ?", [username], (err, row) => {
@@ -59,7 +56,7 @@ app.post("/login", (req, res) => {
     }
 
     // 登入驗證、回傳
-    if (password === row.password) {
+    if ( password === row.password ) {
       req.session.user = username;
 
       const userJson = {
@@ -79,7 +76,7 @@ app.post("/login", (req, res) => {
             res.status(500).json({ error: "Failed to load settings" });
             return;
           }
-
+          
           // 將 settings.json 內容添加到回應中
           userJson.settings = JSON.parse(data);
           res.json({
@@ -103,6 +100,7 @@ app.post("/login", (req, res) => {
     }
   });
 });
+    
 
 // 登出
 app.get("/logout", function (req, res) {
@@ -303,15 +301,15 @@ app.post("/api/upload", upload.single("file"), (req, res) => {
     return res.status(400).send("No file uploaded.");
   }
 
-  const folderId = process.env.FOLDER;
+  const folder = settings.folder;
   const fileName = req.body.uploadname;
   const filePath = req.file.path;
 
   authorize()
     .then((auth) => {
-      uploadFile(auth, folderId, fileName, filePath)
+      uploadFile(auth, folder, fileName, filePath)
         .then((fileId) => {
-          listFiles(auth, folderId)
+          listFiles(auth, folder)
             .then(() => {
               res.send({
                 success: true,
@@ -349,10 +347,10 @@ app.post("/api/upload", upload.single("file"), (req, res) => {
 
 // 獲得雲端檔案列表
 app.get("/api/list", (req, res) => {
-  const folderId = process.env.FOLDER;
+  const folder = settings.folder;
 
   authorize().then((auth) => {
-    listFiles(auth, folderId)
+    listFiles(auth, folder)
       .then((files) => {
         res.send({ success: true, files: files });
       })
@@ -370,7 +368,7 @@ app.post("/api/checked", async (req, res) => {
   authorize()
     .then((auth) => {
       Promise.all(googleIds.map((fileId) => checkedFile(auth, fileId)))
-        .then(() => listFiles(auth, process.env.FOLDER)) // 更新本地列表
+        .then(() => listFiles(auth, settings.folder)) // 更新本地列表
         .then(() => {
           const query =
             'SELECT "googleId", "filename", "creater", "date" FROM files WHERE "check" = "false"';
@@ -405,16 +403,16 @@ app.post("/api/checked", async (req, res) => {
 
 // 自動雲端檔案刷新
 setInterval(() => {
-  const folderId = process.env.FOLDER;
+  const folder = settings.folder;
 
   authorize().then((auth) => {
-    listFiles(auth, folderId)
+    listFiles(auth, folder)
       .then((files) => console.log("Files listed"))
       .catch((error) => console.error("Failed to list files", error));
   });
 }, 600000); // 10min
 
-// 郵件提醒
+// Mailer
 function sendMail(callback) {
   var transporter = nodemailer.createTransport({
     service: "gmail",
@@ -477,12 +475,13 @@ setInterval(() => {
   });
 }, 6000000); // 100min
 
-// Use builded website
+// Static
+//app.use(express.static(path.join(__dirname, "client", "build")));
 //app.get('/*', (req, res) => {
 //  res.sendFile(path.join(__dirname, "client", "build", "index.html" ));
 //});
 
-// 啟動服務器
+// Launch
 app.listen(port, () => {
-  console.log(`Dev-Server is running on http://localhost:${port}`);
+  console.log(`ELIMT is running on http://localhost:${port}`);
 });

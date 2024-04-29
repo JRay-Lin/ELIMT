@@ -85,6 +85,14 @@ export default function Account() {
   };
 
   const handleDeleteUser = async () => {
+    if (!usernameToDelete) {
+      alert("Please enter a username.");
+      return;
+    };
+    if (usernameToDelete === "admin") {
+      alert("Cannot delete admin user.");
+      return;
+    };
     try {
       const response = await axios.post(`/api/account/?modify=delete`, {
         username: usernameToDelete,
@@ -250,10 +258,10 @@ export default function Account() {
               }}
             >
               <MenuItem sx={{ color: "#FFFFFF" }} value="1">
-                學生
+                Student
               </MenuItem>
               <MenuItem sx={{ color: "#FFFFFF" }} value="2">
-                老師
+                Teacher
               </MenuItem>
             </TextField>
           </DialogContent>

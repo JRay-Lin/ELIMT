@@ -3,10 +3,11 @@ import { Typography, Box, TextField, Grid, Button } from "@mui/material";
 
 export default function Settings({ userInfo }) {
   let [folderID, setFolderID] = useState("");
+  let [uploadSize, setUploadsize] = useState()
 
   const handleSave = () => {
     if (userInfo && userInfo.settings) {
-      folderID = folderID === "" ? userInfo.settings.GDrive_folderID : folderID;
+      folderID = folderID === "" ? userInfo.settings.folder : folderID;
 
       console.log(folderID);
     } else {
@@ -18,13 +19,37 @@ export default function Settings({ userInfo }) {
     <Box sx={{ mx: 4, my: 2 }}>
       <Grid container sx={{ mt: 1 }}>
         <Typography variant="h6" sx={{ mt: 0.4, mr: 1 }}>
-          GoogleDrive 資料夾ID :
+          GoogleDrive Folder :
         </Typography>
         <TextField
           fullWidth
           variant="standard"
-          placeholder={userInfo.settings.GDrive_folderID}
+          placeholder={userInfo.settings.folder}
           onChange={(e) => setFolderID(e.target.value)}
+          sx={{
+            "& .MuiInput-underline:before": {
+              borderBottomColor: "#2e2e2e",
+            },
+            "&:hover .MuiInput-underline:before": {
+              borderBottomColor: "#FFFFFF !important",
+            },
+          }}
+          InputProps={{
+            disableUnderline: false,
+            sx: { fontSize: 20 },
+            style: { color: "#C0C0C0", borderColor: "#2e2e2e" },
+          }}
+        />
+      </Grid>
+      <Grid container sx={{ mt: 1 }}>
+        <Typography variant="h6" sx={{ mt: 0.4, mr: 1 }}>
+          Upload Size (mb) :
+        </Typography>
+        <TextField
+          fullWidth
+          variant="standard"
+          placeholder={userInfo.settings.maximum_uploadSize}
+          onChange={(e) => setUploadsize(e.target.value)}
           sx={{
             "& .MuiInput-underline:before": {
               borderBottomColor: "#2e2e2e",

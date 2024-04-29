@@ -20,13 +20,12 @@ const { checkedFile } = require("./functions/checked");
 
 //設定
 const app = express();
-const db = new sqlite3.Database("mydb.sqlite"); //database connect
+const db = new sqlite3.Database("system.sqlite"); //database connect
 const upload = multer({ 
   dest: "uploads/",
   limits: { fileSize: settings.maximum_uploadSize * 1024 * 1024 } // MB
 });
-const port = 80;
-const mailerinterval = settings.SystemMailInterval * 3600000;
+const port = settings.port;
 
 app.use(express.static(path.join(__dirname, "client", "build")));
 
