@@ -1,5 +1,5 @@
 <div align=center>
-  <img width =256 src="https://github.com/JRay9487/Electrical-laboratory-Notebook/assets/65828051/d791f893-5773-4dd9-b2ad-94e0f721e5b8"/>
+  <img width =256 src="https://github.com/JRay9487/ELIMT/assets/65828051/d610864a-bdd9-4127-8362-b5edca21bf42"/>
   <h3>ELIMT</h3>
   <p>Simple and easy to use Electronic Laboratory Info Mangement System.</p>
   <br><br>
@@ -8,12 +8,14 @@
 
 
 
+
 ## Structure 
   Express combined with ReactJS to form a simple, no-installation web application that uses SQLite to store basic user and file information, and Google Cloud API to connect to a cloud hard disk to store files in the cloud, reducing storage-related equipment costs. The front-end page uses MUI (Material UI) to reduce the development difficulty and can be changed to your favorite display style.
   
-  ![project](https://github.com/JRay9487/Electrical-laboratory-Notebook/assets/65828051/987ebe11-90a0-4d03-b816-3cd93b66f3bd)
+  ![project](https://github.com/JRay9487/ELIMT/assets/65828051/e1a1b696-d4e6-4ef3-a543-4fec00f4f01c)
 
 <div>
+
   <br>
 </div>
 
