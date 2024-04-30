@@ -5,7 +5,9 @@
     "main": "server.js",
     "scripts": {
         "client": "cd client && npm start",
-        "install-app": "npm install concurrently --save-dev && npm install nodemon --save-dev && npm install ",
+        "install-client": "cd client && npm install",
+        "install-app": "npm install concurrently --save-dev && npm install nodemon --save0--dev && npm install ",
+        "install-dev": "concurrently \"npm run install-client\" \"npm run install-app\"",
         "dev": "concurrently \"nodemon dev.js\" \"npm run client\""
     },
     "author": "CHUN-JUI,LIN",
@@ -27,6 +29,6 @@
     "devDependencies": {
         "@flydotio/dockerfile": "^0.5.2",
         "concurrently": "^8.2.2",
-        "nodemon": "^3.0.3"
+        "nodemon": "^3.1.0"
     }
 }

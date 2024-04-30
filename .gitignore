@@ -1,6 +1,8 @@
 /node_modules
 /client/build
 /secret
+/data/link.json
+data/settings.json
 /functions/auth/credentials.json
 /functions/auth/token.json
 .DS_Store
