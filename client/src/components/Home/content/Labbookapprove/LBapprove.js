@@ -24,6 +24,19 @@ export default function LBapprove({ tabIndex }) {
   const [checked, setChecked] = useState([]);
   const [open, setOpen] = useState(false);
 
+    // 刷新資料
+    useEffect(() => {
+      loadcheck();
+      loadHistory();
+    
+      const intervalId = setInterval(() => {
+        loadcheck();
+        loadHistory();
+      }, 10000);
+  
+      return () => clearInterval(intervalId);
+    }, []); 
+
   // checkbox
   const handleToggle = (value) => () => {
     const currentIndex = checked.indexOf(value);
@@ -42,6 +55,11 @@ export default function LBapprove({ tabIndex }) {
   const handleApprove = () => {
     setOpen(true);
   };
+
+  const handleReject = () => {
+    setOpen(true);
+  }
+
   const handleClose = () => {
     setOpen(false);
   };
@@ -67,18 +85,7 @@ export default function LBapprove({ tabIndex }) {
     }
   };
 
-  // 刷新資料
-  useEffect(() => {
-    loadcheck();
-    loadHistory();
-  
-    const intervalId = setInterval(() => {
-      loadcheck();
-      loadHistory();
-    }, 10000);
 
-    return () => clearInterval(intervalId);
-  }, []); 
 
   // 簽核功能
   const handleSubmit = async () => {
@@ -121,6 +128,14 @@ export default function LBapprove({ tabIndex }) {
                     <Typography variant="h6">簽核系統</Typography>
                   </Grid>
                   <Grid item>
+                  <Button
+                      variant="contained"
+                      onClick={handleReject}
+                      sx={{ mr: 1 }}
+                      
+                    >
+                      Reject
+                    </Button>
                     <Button
                       variant="contained"
                       onClick={handleApprove}

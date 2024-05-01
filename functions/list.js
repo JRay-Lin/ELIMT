@@ -3,7 +3,7 @@ const sqlite3 = require("sqlite3").verbose();
 
 async function listFiles(auth, folderId) {
   const drive = google.drive({ version: "v3", auth });
-  const settings = require("../settings.json");
+  const settings = require("../data/settings.json");
 
   const res = await drive.files.list({
     pageSize: settings.File_Amount,
@@ -17,7 +17,7 @@ async function listFiles(auth, folderId) {
     return;
   }
 
-  let db = new sqlite3.Database("./mydb.sqlite", (err) => {
+  let db = new sqlite3.Database("./data/system.sqlite", (err) => {
     if (err) {
       console.error(err.message);
     }

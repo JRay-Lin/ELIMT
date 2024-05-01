@@ -1,9 +1,9 @@
-import React, { useState } from "react";
+import React, {useState}  from "react";
 import { Box, Button } from "@mui/material";
 
 export default function Links({ userInfo }) {
     const websiteMap = userInfo.link;
-
+    
     return (
         <Box sx={{ mx: 4, my: 2 }}>
             {Object.entries(websiteMap).map(([name, url]) => (
