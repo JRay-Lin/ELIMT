@@ -39,7 +39,7 @@ function Labbook({ userInfo, tabIndex }) {
     const formattedDate = `${today.getFullYear()}${(today.getMonth() + 1)
       .toString()
       .padStart(2, "0")}${today.getDate().toString().padStart(2, "0")}`;
-    const uploadname = `${formattedDate}-${username}-${fullname}-${experimentDetail}.pdf`;
+    const uploadname = `pending-${formattedDate}-${username}-${fullname}-${experimentDetail}.pdf`;
     setUploadname(uploadname);
     setOpenPop(true);
   };
@@ -115,7 +115,7 @@ function Labbook({ userInfo, tabIndex }) {
                     <Button
                       variant="contained"
                       component="a"
-                      href="https://docs.google.com/document/d/1vsBmcYMHDHo0BA_AmXprkDFd_IFY6qKrm50qy5Eg-30/edit?usp=share_link" // 目標 URL
+                      href={userInfo.settings.report_template}
                       target="_blank"
                       rel="noopener noreferrer"
                     >

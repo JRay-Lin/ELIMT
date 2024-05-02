@@ -290,26 +290,30 @@ app.get("/api/account/list", (req, res) => {
 
 // Files API
 app.get("/api/files", (req, res) => {
-  const { username, check } = req.query;
+  const { username, status } = req.query;
 
   let query =
-    'SELECT "googleId", "filename", "username", "fullname", "date", "check" FROM files';
+    'SELECT "googleId", "filename", "username", "fullname", "date", "status" FROM files';
   const params = [];
 
-  if (username || check) {
+  if (username || status) {
     let conditions = [];
 
     if (username) {
       conditions.push('"username" = ?');
       params.push(username);
+      query += " WHERE " + conditions.join(" AND ");
     }
 
-    if (check) {
-      conditions.push('"check" = ?');
-      params.push(check === "true" ? "true" : "false"); // 確保只將 'true' 或 'false' 作為參數
+    if (status) {
+      // 檢查是否已經有WHERE條件
+      const conditionStart = params.length === 0 ? ' WHERE' : ' AND';
+      // 解析可能的多個狀態值
+      const statuses = status.split(',').map(s => s.trim());
+      const statusConditions = statuses.map(() => '"status" = ?').join(' OR ');
+      query += `${conditionStart} (${statusConditions})`;
+      params.push(...statuses);
     }
-
-    query += " WHERE " + conditions.join(" AND ");
   }
 
   // 執行查詢
@@ -390,15 +394,15 @@ app.get("/api/list", (req, res) => {
 
 // 檔案簽核
 app.post("/api/checked", async (req, res) => {
-  const { googleIds } = req.body;
+  const { googleIds, decision } = req.body;
 
   authorize()
     .then((auth) => {
-      Promise.all(googleIds.map((fileId) => checkedFile(auth, fileId)))
+      Promise.all(googleIds.map((fileId) => checkedFile(auth, fileId, decision)))
         .then(() => listFiles(auth, settings.folder)) // 更新本地列表
         .then(() => {
           const query =
-            'SELECT "googleId", "filename", "creater", "date" FROM files WHERE "check" = "false"';
+            'SELECT "googleId", "filename", "creater", "date" FROM files WHERE "status" = "pending"';
           db.all(query, [], (err, rows) => {
             if (err) {
               console.error("從數據庫獲取文件時出錯：", err);

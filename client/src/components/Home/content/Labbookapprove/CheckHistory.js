@@ -63,6 +63,9 @@ export default function CheckHistory({ history }) {
               <TableCell padding="none" sx={{ pt: 2, pl: 2 }}>
                 Date
               </TableCell>
+              <TableCell padding="none" sx={{ pt: 2, pl: 2 }}>
+                Status
+              </TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -79,6 +82,7 @@ export default function CheckHistory({ history }) {
                   </Link>
                 </TableCell>
                 <TableCell>{history.date}</TableCell>
+                <TableCell>{history.status}</TableCell>
               </TableRow>
             ))}
           </TableBody>

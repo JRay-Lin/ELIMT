@@ -141,7 +141,7 @@ export default function Account() {
                 </Button>
                 <Button
                   variant="contained"
-                  sx={{ mr: 0 }}
+                  sx={{ mr: 0 ,':hover':{bgcolor:"#FF6464"}}}
                   onClick={handleOpenDeleteDialog}
                 >
                   <DeleteIcon />

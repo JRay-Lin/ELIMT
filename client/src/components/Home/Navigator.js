@@ -99,6 +99,8 @@ export default function Navigator(props) {
             ...itemCategory,
             fontSize: 22,
             color: "#5285DE",
+            fontWeight: "bold",
+            justifyContent: "center",
           }}
         >
           ELIMT
@@ -110,7 +112,7 @@ export default function Navigator(props) {
               color: "#fff",
             }}
           >
-            v1.2.0
+            v1.3.0
           </Typography>
         </ListItem>
 

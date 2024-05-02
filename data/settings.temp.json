@@ -2,5 +2,6 @@
   "port":80,
   "File_Amount": 128,
   "maximum_uploadSize":64,
-  "folder": "xxxxxxxxxxxxxxxxxxxxxxx"
+  "folder": "xxxxxxxxxxxxxxxxxxxxxxx",
+  "report_tempalte": "https://xxxxxxxxxxxxxxxxxxxxxxx"
 }

@@ -43,26 +43,25 @@ async function listFiles(auth, folderId) {
 
     // Insert new data
     files.forEach((file) => {
-      const normalizedFileName = file.name.replace(/^checked-/, "");
-      const fileInfo = normalizedFileName.split("-");
+      const fileInfo = file.name.split("-");
 
-      if (fileInfo.length < 4) {
+      if (fileInfo.length < 5) {
         console.log(`File name format is incorrect: ${file.name}`);
         return;
       }
 
-      const check = file.name.startsWith("checked-") ? "true" : "false";
-      const date = `${fileInfo[0].substring(0, 4)}-${fileInfo[0].substring(
+      const status = fileInfo[0];
+      const date = `${fileInfo[1].substring(0, 4)}-${fileInfo[1].substring(
         4,
         6
-      )}-${fileInfo[0].substring(6, 8)}`;
-      const username = fileInfo[1];
-      const fullname = fileInfo[2];
-      const filename = fileInfo.slice(3).join("-");
+      )}-${fileInfo[1].substring(6, 8)}`;
+      const username = fileInfo[2];
+      const fullname = fileInfo[3];
+      const filename = fileInfo.slice(4).join("-");
 
       db.run(
-        `INSERT INTO files ("googleId", "googleName", "username", "fullname", "filename", "date", "check") VALUES (?, ?, ?, ?, ?, ?, ?)`,
-        [file.id, file.name, username, fullname, filename, date, check], 
+        `INSERT INTO files ("googleId", "googleName", "username", "fullname", "filename", "date", "status") VALUES (?, ?, ?, ?, ?, ?, ?)`,
+        [file.id, file.name, username, fullname, filename, date, status], 
         function (err) {
           if (err) {
             return console.error(err.message);

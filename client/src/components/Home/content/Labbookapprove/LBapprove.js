@@ -12,6 +12,7 @@ import {
   DialogActions,
   Typography,
   DialogContentText,
+  buttonGroupClasses,
 } from "@mui/material";
 import ChecklistIcon from "@mui/icons-material/Checklist";
 
@@ -23,19 +24,20 @@ export default function LBapprove({ tabIndex }) {
   const [historyList, setHistoryList] = useState([]);
   const [checked, setChecked] = useState([]);
   const [open, setOpen] = useState(false);
+  const [decision, setDecision] = useState();
 
-    // 刷新資料
-    useEffect(() => {
+  // 刷新資料
+  useEffect(() => {
+    loadcheck();
+    loadHistory();
+
+    const intervalId = setInterval(() => {
       loadcheck();
       loadHistory();
-    
-      const intervalId = setInterval(() => {
-        loadcheck();
-        loadHistory();
-      }, 10000);
-  
-      return () => clearInterval(intervalId);
-    }, []); 
+    }, 10000);
+
+    return () => clearInterval(intervalId);
+  }, []);
 
   // checkbox
   const handleToggle = (value) => () => {
@@ -53,12 +55,24 @@ export default function LBapprove({ tabIndex }) {
 
   // Dialog
   const handleApprove = () => {
-    setOpen(true);
+    if (checked.length !== 0) {
+      setOpen(true);
+      setDecision("approve");
+
+    } else {
+      alert("Please check at least one document");
+    }
   };
 
   const handleReject = () => {
-    setOpen(true);
-  }
+    if (checked.length !== 0) {
+      setOpen(true);
+      setDecision("reject");
+
+    } else {
+      alert("Please check at least one document");
+    }
+  };
 
   const handleClose = () => {
     setOpen(false);
@@ -67,39 +81,40 @@ export default function LBapprove({ tabIndex }) {
   // 取得待簽核資料
   const loadcheck = async () => {
     try {
-      const response = await axios.get("/api/files/?check=false");
+      const response = await axios.get("/api/files/?status=pending");
       setFileList(response.data.files);
     } catch (error) {
       console.error("Error fetching files:", error);
     }
   };
 
-   // 簽核歷史紀錄
-   const loadHistory = async () => {
+  // 簽核歷史紀錄
+  const loadHistory = async () => {
     try {
-      const response = await axios.get("/api/files/?check=true");
-      const filteredFiles = response.data.files.filter(file => file.filename !== "SystemTest.pdf");
+      const response = await axios.get("/api/files/?status=approve,reject");
+      const filteredFiles = response.data.files.filter(
+        (file) => file.filename !== "SystemTest.pdf"
+      );
       setHistoryList(filteredFiles);
     } catch (error) {
       console.error("Error fetching files:", error);
     }
   };
 
-
-
   // 簽核功能
   const handleSubmit = async () => {
     try {
       const response = await axios.post("/api/checked", {
         googleIds: checked,
+        decision: decision,
       });
       console.log("res", response.data);
-      alert("檔案簽核成功!");
+      alert("File signed sucessfully!");
       setChecked([]);
       loadcheck();
     } catch (error) {
       console.error("err", error);
-      alert("檔案簽核失敗!");
+      alert("Error occurred: File was NOT signed successfully!");
     }
     setOpen(false);
   };
@@ -108,14 +123,14 @@ export default function LBapprove({ tabIndex }) {
     <>
       {tabIndex === 0 && (
         <Paper sx={{ maxWidth: 936, margin: "auto", overflow: "hidden" }}>
-          <Box sx={{mx:4 , my:2}}>
+          <Box sx={{ mx: 4, my: 2 }}>
             <AppBar
               position="static"
               color="transparent"
               elevation={0}
               sx={{ borderBottom: "1px solid rgba(0, 0, 0, 0.12)" }}
             >
-              <Grid sx={{pl:0}}>
+              <Grid sx={{ pl: 0 }}>
                 <Grid container spacing={2} alignItems="center">
                   <Grid item>
                     <ChecklistIcon
@@ -128,18 +143,21 @@ export default function LBapprove({ tabIndex }) {
                     <Typography variant="h6">簽核系統</Typography>
                   </Grid>
                   <Grid item>
-                  <Button
+                    <Button
                       variant="contained"
                       onClick={handleReject}
-                      sx={{ mr: 1 }}
-                      
+                      sx={{
+                        mr: 1,
+                        width: 100,
+                        ":hover": { bgcolor: "#FF6464" },
+                      }}
                     >
                       Reject
                     </Button>
                     <Button
                       variant="contained"
                       onClick={handleApprove}
-                      sx={{ mr: 1 }}
+                      sx={{ mr: 1, width: 100, ":hover":{bgcolor:"#95C471"} }}
                     >
                       Approve
                     </Button>
@@ -155,7 +173,9 @@ export default function LBapprove({ tabIndex }) {
             <Dialog open={open} onClose={handleClose}>
               <DialogTitle>確認簽核</DialogTitle>
               <DialogContent>
-                <DialogContentText>以下文件將被簽核通過：</DialogContentText>
+                <DialogContentText sx={{ mb: 0.5 }}>
+                  {decision === "approve" ? "以下文件將被通過" : "以下文件將被拒絕"}
+                </DialogContentText>
                 <DialogContentText>
                   {checked.length > 0 ? (
                     checked.map((id) => {
@@ -168,9 +188,7 @@ export default function LBapprove({ tabIndex }) {
                         </div>
                       );
                     })
-                  ) : (
-                    <div>未選擇任何檔案</div>
-                  )}
+                  ):(<></>)}
                 </DialogContentText>
               </DialogContent>
               <DialogActions>

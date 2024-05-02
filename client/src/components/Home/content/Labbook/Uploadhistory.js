@@ -66,7 +66,7 @@ export default function Filelist({ items }) {
               Time
             </TableCell>
             <TableCell padding="none" sx={{ pt: 2, pl: 2 }}>
-              Checked
+              status
             </TableCell>
           </TableRow>
         </TableHead>
@@ -83,7 +83,7 @@ export default function Filelist({ items }) {
                 </Link>
               </TableCell>
               <TableCell>{item.date}</TableCell>
-              <TableCell>{item.check} </TableCell>
+              <TableCell>{item.status} </TableCell>
             </TableRow>
           ))}
         </TableBody>
