@@ -1,5 +1,4 @@
 /node_modules
-/client/build
 /uploads/
 /secret
 /data/link.json
