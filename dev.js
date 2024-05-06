@@ -60,6 +60,7 @@ app.post("/login", (req, res) => {
     if (password === row.password) {
       req.session.user = username;
       const linkPath = path.join("./data/link.json");
+      const settingsPath = path.join("./data/settings.json")
 
       const userJson = {
         username: row.username,
@@ -72,33 +73,38 @@ app.post("/login", (req, res) => {
         if (err) {
           console.error(err.message);
           res.status(500).json({
-            error: "Failed to load link",
+            error: "Failed to load settings"
+          });
+        }
+        userJson.link = JSON.parse(data);
+      });
+      fs.readFile(settingsPath, (err, data) => {
+        if (err) {
+          console.error(err.message);
+          res.status(500).json({
+            error: "Failed to load settings",
           });
           return;
         }
-        userJson.link = JSON.parse(data);
-        
+    
+        const settings = JSON.parse(data);
+        userJson.settings = settings;  // 确保整个settings对象被赋值到userJson.settings
+    
         if (row.privilege === "3") {
-          const settingsPath = path.join("./data/settings.json");
-
-          fs.readFile(settingsPath, (err, data) => {
-            if (err) {
-              console.error(err.message);
-              res.status(500).json({
-                error: "Failed to load settings",
-              });
-              return;
-            }
-
-            userJson.settings = JSON.parse(data);
-            res.json({
-              success: true,
-              authenticated: true,
-              message: "Login success",
-              user: userJson,
-            });
+          // 特权用户，返回完整的settings
+          res.json({
+            success: true,
+            authenticated: true,
+            message: "Login success",
+            user: userJson,
           });
         } else {
+          // 非特权用户，可能需要限制某些设置信息的访问
+          const limitedSettings = {
+            report_template: settings.report_template  // 仅返回需要的部分
+          };
+          userJson.settings = limitedSettings;  // 为非特权用户赋值限制后的设置
+    
           res.json({
             success: true,
             authenticated: true,
@@ -107,7 +113,6 @@ app.post("/login", (req, res) => {
           });
         }
       });
-
     } else {
       res.status(401).json({ error: "Incorrect password" });
     }
@@ -307,10 +312,10 @@ app.get("/api/files", (req, res) => {
 
     if (status) {
       // 檢查是否已經有WHERE條件
-      const conditionStart = params.length === 0 ? ' WHERE' : ' AND';
+      const conditionStart = params.length === 0 ? " WHERE" : " AND";
       // 解析可能的多個狀態值
-      const statuses = status.split(',').map(s => s.trim());
-      const statusConditions = statuses.map(() => '"status" = ?').join(' OR ');
+      const statuses = status.split(",").map((s) => s.trim());
+      const statusConditions = statuses.map(() => '"status" = ?').join(" OR ");
       query += `${conditionStart} (${statusConditions})`;
       params.push(...statuses);
     }
@@ -398,7 +403,9 @@ app.post("/api/checked", async (req, res) => {
 
   authorize()
     .then((auth) => {
-      Promise.all(googleIds.map((fileId) => checkedFile(auth, fileId, decision)))
+      Promise.all(
+        googleIds.map((fileId) => checkedFile(auth, fileId, decision))
+      )
         .then(() => listFiles(auth, settings.folder)) // 更新本地列表
         .then(() => {
           const query =
