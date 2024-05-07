@@ -26,8 +26,6 @@ const upload = multer({
   limits: { fileSize: settings.maximum_uploadSize * 1024 * 1024 }, // MB
 });
 
-//const port = settings.port;
-const port = 3001;
 
 // POST parser
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -535,6 +533,8 @@ setInterval(() => {
 }, 6000000); // 100min
 
 // Static
+//const port = settings.port;
+const port = 3001;
 //app.use(express.static(path.join(__dirname, "client", "build")));
 //app.get('/*', (req, res) => {
 //  res.sendFile(path.join(__dirname, "client", "build", "index.html" ));
