@@ -77,42 +77,41 @@ app.post("/login", (req, res) => {
           });
         }
         userJson.link = JSON.parse(data);
+        fs.readFile(settingsPath, (err, data) => {
+          if (err) {
+            console.error(err.message);
+            res.status(500).json({
+              error: "Failed to load settings",
+            });
+            return;
+          }
+  
+          const settings = JSON.parse(data);
+          userJson.settings = settings;
+  
+          if (row.privilege === "3") {
+            res.json({
+              success: true,
+              authenticated: true,
+              message: "Login success",
+              user: userJson,
+            });
+          } else {
+            const limitedSettings = {
+              report_template: settings.report_template,
+            };
+            userJson.settings = limitedSettings;
+  
+            res.json({
+              success: true,
+              authenticated: true,
+              message: "Login success",
+              user: userJson,
+            });
+          }
+        });
       });
-      fs.readFile(settingsPath, (err, data) => {
-        if (err) {
-          console.error(err.message);
-          res.status(500).json({
-            error: "Failed to load settings",
-          });
-          return;
-        }
-
-        const settings = JSON.parse(data);
-        userJson.settings = settings; // 确保整个settings对象被赋值到userJson.settings
-
-        if (row.privilege === "3") {
-          // 特权用户，返回完整的settings
-          res.json({
-            success: true,
-            authenticated: true,
-            message: "Login success",
-            user: userJson,
-          });
-        } else {
-          // 非特权用户，可能需要限制某些设置信息的访问
-          const limitedSettings = {
-            report_template: settings.report_template, // 仅返回需要的部分
-          };
-          userJson.settings = limitedSettings; // 为非特权用户赋值限制后的设置
-
-          res.json({
-            success: true,
-            authenticated: true,
-            message: "Login success",
-            user: userJson,
-          });
-        }
-      });
+      
     } else {
       res.status(401).json({ error: "Incorrect password" });
     }
@@ -483,6 +482,7 @@ function sendMail(callback, fileId, status) {
       }
     });
   } else if (status === "approve") {
+
   } else if (status === "reject") {
   } else {
   }

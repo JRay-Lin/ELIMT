@@ -87,10 +87,10 @@ app.post("/login", (req, res) => {
         }
     
         const settings = JSON.parse(data);
-        userJson.settings = settings;  // 确保整个settings对象被赋值到userJson.settings
+        userJson.settings = settings;  
     
         if (row.privilege === "3") {
-          // 特权用户，返回完整的settings
+
           res.json({
             success: true,
             authenticated: true,
@@ -98,11 +98,10 @@ app.post("/login", (req, res) => {
             user: userJson,
           });
         } else {
-          // 非特权用户，可能需要限制某些设置信息的访问
           const limitedSettings = {
-            report_template: settings.report_template  // 仅返回需要的部分
+            report_template: settings.report_template 
           };
-          userJson.settings = limitedSettings;  // 为非特权用户赋值限制后的设置
+          userJson.settings = limitedSettings;  
     
           res.json({
             success: true,
