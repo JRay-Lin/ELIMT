@@ -21,7 +21,7 @@ import Filelist from "./Uploadhistory";
 function Labbook({ userInfo, tabIndex }) {
   const fullname = userInfo ? userInfo.fullname : "Unknown";
   const username = userInfo ? userInfo.username : "Unknown";
-  const reportTemplate = userInfo?.settings?.report_template ?? "https://www.google.com"
+  const reportTemplate = userInfo ? userInfo.settings.report_tempalte : "";
   const [experimentDetail, setExperimentDetail] = useState("");
   const [uploadFile, setUploadFile] = useState(null);
   const [uploadHistory, setUploadHistory] = useState([]);

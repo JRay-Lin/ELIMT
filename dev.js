@@ -60,7 +60,7 @@ app.post("/login", (req, res) => {
     if (password === row.password) {
       req.session.user = username;
       const linkPath = path.join("./data/link.json");
-      const settingsPath = path.join("./data/settings.json")
+      const settingsPath = path.join("./data/settings.json");
 
       const userJson = {
         username: row.username,
@@ -73,7 +73,7 @@ app.post("/login", (req, res) => {
         if (err) {
           console.error(err.message);
           res.status(500).json({
-            error: "Failed to load settings"
+            error: "Failed to load settings",
           });
         }
         userJson.link = JSON.parse(data);
@@ -86,10 +86,10 @@ app.post("/login", (req, res) => {
           });
           return;
         }
-    
+
         const settings = JSON.parse(data);
-        userJson.settings = settings;  // 确保整个settings对象被赋值到userJson.settings
-    
+        userJson.settings = settings; // 确保整个settings对象被赋值到userJson.settings
+
         if (row.privilege === "3") {
           // 特权用户，返回完整的settings
           res.json({
@@ -101,10 +101,10 @@ app.post("/login", (req, res) => {
         } else {
           // 非特权用户，可能需要限制某些设置信息的访问
           const limitedSettings = {
-            report_template: settings.report_template  // 仅返回需要的部分
+            report_template: settings.report_template, // 仅返回需要的部分
           };
-          userJson.settings = limitedSettings;  // 为非特权用户赋值限制后的设置
-    
+          userJson.settings = limitedSettings; // 为非特权用户赋值限制后的设置
+
           res.json({
             success: true,
             authenticated: true,
@@ -451,7 +451,7 @@ setInterval(() => {
 }, 600000); // 10min
 
 // Mailer
-function sendMail(callback) {
+function sendMail(callback, fileId, status) {
   var transporter = nodemailer.createTransport({
     service: "gmail",
     auth: {
@@ -460,27 +460,32 @@ function sendMail(callback) {
     },
   });
 
-  const query = 'SELECT "email" FROM users WHERE "privilege" > 1';
-  db.all(query, [], (err, rows) => {
-    if (err) {
-      throw err;
-    }
-
-    const receivers = rows.map((row) => row.email).join(", ");
-
-    if (receivers) {
-      var mailOptions = {
-        from: process.env.MAILER,
-        to: receivers, // 使用轉換後的接收者字串
-        subject: "ELIMT System Information",
-        html: "<h3>康老師您好，已有人上傳一份實驗紀錄，請撥空查閱<a href=http://elimt.duckdns.org>ELIMT電子系統</a>。</h3><h3>You have a document to be signed, please check the ELIMT system.</h3>",
+  if (status === "upload") {
+    const query = 'SELECT "email" FROM users WHERE "privilege" = 2';
+    db.all(query, [], (err, rows) => {
+      if (err) {
+        throw err;
       };
 
-      transporter.sendMail(mailOptions, callback);
-    } else {
-      console.log("No users with privilege > 1 found.");
-    }
-  });
+      const receivers = rows.map((row) => row.email).join(", ");
+
+      if (receivers) {
+        var mailOptions = {
+          from: process.env.MAILER,
+          to: receivers, // 使用轉換後的接收者字串
+          subject: "ELIMT System Information",
+          html: settings.mailer.upload,
+        };
+
+        transporter.sendMail(mailOptions, callback);
+      } else {
+        console.log("No users with privilege > 1 found.");
+      }
+    });
+  } else if (status === "approve") {
+  } else if (status === "reject") {
+  } else {
+  }
 }
 
 // 暫存檔案清除器

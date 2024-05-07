@@ -3,5 +3,10 @@
   "File_Amount": 128,
   "maximum_uploadSize":64,
   "folder": "xxxxxxxxxxxxxxxxxxxxxxx",
-  "report_tempalte": "https://xxxxxxxxxxxxxxxxxxxxxxx"
+  "report_tempalte": "https://xxxxxxxxxxxxxxxxxxxxxxx",
+  "mailer": {
+    "upload": "<p>康老師您好，系統中有一份新文件等待簽核，請撥空查閱<a href=http://elimt.duckdns.org>ELIMT電子系統</a></p><p>You have a document to be signed, please check the <a href=http://elimt.duckdns.org>ELIMT system</p>",
+    "approve": "<p>您上傳於系統中的文件已被簽核通過，相關紀錄請查閱<a href=http://elimt.duckdns.org>ELIMT電子系統</a></p><p>The document you uploaded had been approve, for more inforamtion please check the <a href=http://elimt.duckdns.org>ELIMT system</a></p>",
+    "reject": "<p>您上傳於系統中的文件已被拒絕通過，相關紀錄請查閱<a href=http://elimt.duckdns.org>ELIMT電子系統</a></p><p>The document you uploaded had been reject, for more inforamtion please check the <a href=http://elimt.duckdns.org>ELIMT system</a></p>"
+  }
 }
