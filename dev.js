@@ -77,6 +77,7 @@ app.post("/login", (req, res) => {
           });
         }
         userJson.link = JSON.parse(data);
+
         fs.readFile(settingsPath, (err, data) => {
           if (err) {
             console.error(err.message);
@@ -341,42 +342,30 @@ app.post("/api/upload", upload.single("file"), (req, res) => {
   const filePath = req.file.path;
 
   authorize()
-    .then((auth) => {
+    .then(auth => {
       uploadFile(auth, folder, fileName, filePath)
-        .then((fileId) => {
-          listFiles(auth, folder)
-            .then(() => {
-              res.send({
-                success: true,
-                fileId: fileId,
-                message: "File uploaded and database updated successfully.",
-              });
-              sendMail((error, info) => {
-                if (error) {
-                  console.log("Error sending mail: ", error);
-                } else {
-                  console.log("Mail sent: ", info.response);
-                }
-              });
-            })
-            .catch((error) => {
-              console.error("Failed to update database:", error);
-              // 即使更新資料庫失敗，也返回上傳成功的訊息
-              res.send({
-                success: true,
-                fileId: fileId,
-                message: "File uploaded but failed to update database.",
-              });
-            });
+        .then(() => {
+          listFiles(auth, folder);  // 列出文件以獲取最新上傳的文件ID
         })
-        .catch((error) => {
-          console.error(error);
-          res.status(500).send("Failed to upload file to Google Drive.");
+        .then(fileId => {
+          sendMail(fileId, "upload");
+          res.send({
+            success: true,
+            fileId: fileId,
+            message: "File uploaded and email sent successfully.",
+          });
+        })
+        .catch(error => {
+          console.error("Failed to list files or send email:", error);
+          res.send({
+            success: false,
+            message: "File uploaded but failed to list files or send email.",
+          });
         });
     })
-    .catch((error) => {
-      console.error("Authorization failed:", error);
-      res.status(500).send("Failed to authorize.");
+    .catch(error => {
+      console.error("Authorization failed or file upload failed:", error);
+      res.status(500).send("Failed to authorize or upload file.");
     });
 });
 
@@ -400,42 +389,34 @@ app.get("/api/list", (req, res) => {
 app.post("/api/checked", async (req, res) => {
   const { googleIds, decision } = req.body;
 
-  authorize()
-    .then((auth) => {
-      Promise.all(
-        googleIds.map((fileId) => checkedFile(auth, fileId, decision))
-      )
-        .then(() => listFiles(auth, settings.folder)) // 更新本地列表
-        .then(() => {
-          const query =
-            'SELECT "googleId", "filename", "creater", "date" FROM files WHERE "status" = "pending"';
-          db.all(query, [], (err, rows) => {
-            if (err) {
-              console.error("從數據庫獲取文件時出錯：", err);
-              return res.status(500).json({
-                success: false,
-                message: "從數據庫獲取文件時出錯",
-              });
-            }
-            // 返回更新後的文件列表
-            res.json({
-              success: true,
-              files: rows,
-            });
-          });
-        })
-        .catch((error) => {
-          console.error("處理文件或更新列表時出錯：", error);
-          res.status(500).json({
-            success: false,
-            message: "處理文件或更新列表時出錯",
-          });
+  try {
+    const auth = await authorize();
+    await Promise.all(googleIds.map((fileId) => checkedFile(auth, fileId, decision)));
+    await listFiles(auth, settings.folder); // 更新本地列表
+
+    const query = 'SELECT "googleId", "filename", "creater", "date" FROM files WHERE "status" = "pending"';
+    db.all(query, [], (err, rows) => {
+      if (err) {
+        console.error("從數據庫獲取文件時出錯：", err);
+        return res.status(500).json({
+          success: false,
+          message: "從數據庫獲取文件時出錯",
         });
-    })
-    .catch((authError) => {
-      console.error("授權失敗：", authError);
-      res.status(500).json({ success: false, message: "授權失敗" });
+      }
+      // 發送郵件通知
+      googleIds.forEach((fileId) => {
+        sendMail(fileId, decision);
+      });
+      // 返回更新後的文件列表
+      res.json({
+        success: true,
+        files: rows,
+      });
     });
+  } catch (error) {
+    console.error("處理文件或授權失敗：", error);
+    res.status(500).json({ success: false, message: "處理文件或授權失敗" });
+  }
 });
 
 // 自動雲端檔案刷新
@@ -450,7 +431,7 @@ setInterval(() => {
 }, 600000); // 10min
 
 // Mailer
-function sendMail(callback, fileId, status) {
+function sendMail(fileId, status) {
   var transporter = nodemailer.createTransport({
     service: "gmail",
     auth: {
@@ -471,22 +452,57 @@ function sendMail(callback, fileId, status) {
       if (receivers) {
         var mailOptions = {
           from: process.env.MAILER,
-          to: receivers, // 使用轉換後的接收者字串
-          subject: "ELIMT System Information",
+          to: receivers,
+          subject: "ELIMT System",
           html: settings.mailer.upload,
         };
 
-        transporter.sendMail(mailOptions, callback);
+        transporter.sendMail(mailOptions);
       } else {
-        console.log("No users with privilege > 1 found.");
+        console.log("No users with privilege = 2 found.");
       }
     });
-  } else if (status === "approve") {
+  } else if (status === "approve" || status === "reject") {
+    const query = `
+      SELECT users.email
+      FROM files
+      JOIN users ON files.username = users.username
+      WHERE files.googleId = ?
+    `;
 
-  } else if (status === "reject") {
+    db.get(query, [fileId], (err, row) => {
+      if (err) {
+        console.error("Database error:", err);
+        return;
+      }
+
+      if (row) {
+        var subject = "ELIMT System";
+        var htmlMessage = status === "approve" ? settings.mailer.approve : settings.mailer.reject;
+
+        var mailOptions = {
+          from: process.env.MAILER,
+          to: row.email,
+          subject: subject,
+          html: htmlMessage,
+        };
+
+        transporter.sendMail(mailOptions, function(error, info) {
+          if (error) {
+            console.error("Failed to send email:", error);
+          } else {
+            console.log("Email sent: " + info.response);
+          }
+        });
+      } else {
+        console.log("No user found for the specified file ID.");
+      }
+    });
   } else {
+    console.error("Unsupported status:", status);
   }
-}
+};
+
 
 // 暫存檔案清除器
 setInterval(() => {

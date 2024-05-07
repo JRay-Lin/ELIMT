@@ -16,13 +16,15 @@ async function checkedFile(auth, fileId, decision) {
       });
       return updatedFile;
 
-    } else {
+    } else if (decision === "reject") {
       const updatedFile = await drive.files.update({
         fileId,
         resource: { name: reject },
       });
       return updatedFile;
-    };
+    } else {
+      console.err("Invaid file type!", err)
+    }
     
 
     function escapeForLog(str) {

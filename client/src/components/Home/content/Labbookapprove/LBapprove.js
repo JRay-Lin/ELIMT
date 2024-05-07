@@ -109,7 +109,12 @@ export default function LBapprove({ tabIndex }) {
         decision: decision,
       });
       console.log("res", response.data);
-      alert("File signed sucessfully!");
+      if (decision === "approve") {
+        alert("File signed sucessfully!");
+      } else {
+        alert("File rejected sucessfully!");
+      };
+      
       setChecked([]);
       loadcheck();
     } catch (error) {
