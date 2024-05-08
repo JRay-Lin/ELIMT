@@ -112,7 +112,7 @@ export default function Navigator(props) {
               color: "#fff",
             }}
           >
-            v1.3.4
+            v1.3.5
           </Typography>
         </ListItem>
 
