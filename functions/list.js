@@ -17,6 +17,8 @@ async function listFiles(auth, folderId) {
 
     try {
         let allFiles = [];
+
+        // Get all folders insidet the master folder
         const folderRes = await drive.files.list({
             pageSize: settings.File_Amount,
             fields: "nextPageToken, files(id, name)",
@@ -25,9 +27,13 @@ async function listFiles(auth, folderId) {
         });
 
         const folders = folderRes.data.files;
+        console.log("Folders:");
+        console.log(folders);
+
         if (folders.length === 0) {
             console.log("No folders found.");
         } else {
+            // Get all files inside each folder
             for (const folder of folders) {
                 const fileRes = await drive.files.list({
                     pageSize: settings.File_Amount,

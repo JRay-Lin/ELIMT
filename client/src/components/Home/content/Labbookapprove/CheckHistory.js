@@ -21,11 +21,20 @@ export default function CheckHistory({ history }) {
         setSearchTerm(e.target.value);
     };
 
-    const filteredItems = history.filter(
+    // Define a function for sorting by date
+    const sortItemsByDate = (a, b) => {
+        // Assuming date format is YYYY-MM-DD, you can convert to date objects to compare
+        return new Date(b.date) - new Date(a.date);
+    };
+
+    // Sort history first, then filter
+    const sortedHistory = history.sort(sortItemsByDate);
+    const filteredItems = sortedHistory.filter(
         (item) =>
             item.filename.toLowerCase().includes(searchTerm.toLowerCase()) ||
             item.fullname.toLowerCase().includes(searchTerm.toLowerCase())
     );
+
     return (
         <Box sx={{ mx: 4, my: 2 }}>
             <Box sx={{ backgroundColor: "#1E1E1E" }}>
@@ -54,7 +63,24 @@ export default function CheckHistory({ history }) {
                     </Grid>
                 </Grid>
             </Box>
-            <TableContainer component={Paper}>
+            <TableContainer
+                component={Paper}
+                sx={{
+                    maxHeight: 600,
+                    overflow: "auto",
+                    "&::-webkit-scrollbar": {
+                        width: "3px",
+                        border: "30px",
+                    },
+                    "&::-webkit-scrollbar-track": {
+                        background: "transparent", // Scrollbar track color
+                    },
+                    "&::-webkit-scrollbar-thumb": {
+                        backgroundColor: "#FFFFFF8B", // Scrollbar handle color
+                        borderRadius: "10px",
+                    },
+                }}
+            >
                 <Table>
                     <TableHead>
                         <TableRow>
