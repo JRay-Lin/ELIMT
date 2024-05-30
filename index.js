@@ -8,9 +8,16 @@ const sqlite3 = require("sqlite3");
 const path = require("path");
 const nodemailer = require("nodemailer");
 const bodyParser = require("body-parser");
+const readline = require("readline");
 
 const uploadsFolder = "./uploads/";
 const settings = require("./data/settings.json");
+
+// readline
+const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout,
+});
 
 // Google Drive components
 const { authorize } = require("./functions/auth_modules");
