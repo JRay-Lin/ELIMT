@@ -1,7 +1,7 @@
 <div align=center>
   <img width =256 src="https://github.com/JRay9487/ELIMT/assets/65828051/d610864a-bdd9-4127-8362-b5edca21bf42"/>
   <h3>ELIMT</h3>
-  <p>Simple and easy to use Electronic Laboratory Info Mangement System.</p>
+  <p>Simple and easy to use Electronic Laboratory Info Mangement Tools.</p>
   <br><br>
 
 </div>
